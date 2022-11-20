@@ -8,7 +8,6 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
-import org.bukkit.event.block.Action;
 import org.bukkit.event.entity.EntityPickupItemEvent;
 import org.bukkit.event.player.*;
 import org.jetbrains.annotations.NotNull;
@@ -36,11 +35,11 @@ public class ItemSettingCommand extends TippieCommand implements Listener {
            if (entry.get(0).itemSetting()) {
                player.sendMessage("Toggled item pick up and drop OFF");
                storage.setItemSetting(player.getUniqueId(), false);
-               KimiVanish.getPlugin(KimiVanish.class).getVanishedPlayer().itemPlayers.remove(player.getUniqueId());
+               KimiVanish.getPlugin(KimiVanish.class).getVanishManager().itemPlayers.remove(player.getUniqueId());
            } else {
                player.sendMessage("Toggled item pick up and drop ON");
                storage.setItemSetting(player.getUniqueId(), true);
-               KimiVanish.getPlugin(KimiVanish.class).getVanishedPlayer().itemPlayers.add(player.getUniqueId());
+               KimiVanish.getPlugin(KimiVanish.class).getVanishManager().itemPlayers.add(player.getUniqueId());
            }
         });
     }
@@ -50,7 +49,7 @@ public class ItemSettingCommand extends TippieCommand implements Listener {
         if (canDropItem(event.getPlayer()))
             return;
 
-        if (KimiVanish.getPlugin(KimiVanish.class).getVanishedPlayer().isVanished(event.getPlayer()))
+        if (KimiVanish.getPlugin(KimiVanish.class).getVanishManager().isVanished(event.getPlayer()))
             event.setCancelled(true);
     }
 
@@ -62,12 +61,12 @@ public class ItemSettingCommand extends TippieCommand implements Listener {
         if (canDropItem(player))
             return;
 
-        if (KimiVanish.getPlugin(KimiVanish.class).getVanishedPlayer().isVanished(player))
+        if (KimiVanish.getPlugin(KimiVanish.class).getVanishManager().isVanished(player))
             event.setCancelled(true);
     }
 
     private boolean canDropItem(Player player) {
-        return KimiVanish.getPlugin(KimiVanish.class).getVanishedPlayer().itemPlayers.contains(player.getUniqueId());
+        return KimiVanish.getPlugin(KimiVanish.class).getVanishManager().itemPlayers.contains(player.getUniqueId());
     }
 
     @EventHandler
@@ -77,13 +76,13 @@ public class ItemSettingCommand extends TippieCommand implements Listener {
                 return;
 
             if (entry.get(0).itemSetting()) {
-                KimiVanish.getPlugin(KimiVanish.class).getVanishedPlayer().itemPlayers.add(event.getPlayer().getUniqueId());
+                KimiVanish.getPlugin(KimiVanish.class).getVanishManager().itemPlayers.add(event.getPlayer().getUniqueId());
             }
         });
     }
 
     @EventHandler
     private void onPlayerLeave(PlayerQuitEvent event) {
-        KimiVanish.getPlugin(KimiVanish.class).getVanishedPlayer().itemPlayers.remove(event.getPlayer().getUniqueId());
+        KimiVanish.getPlugin(KimiVanish.class).getVanishManager().itemPlayers.remove(event.getPlayer().getUniqueId());
     }
 }

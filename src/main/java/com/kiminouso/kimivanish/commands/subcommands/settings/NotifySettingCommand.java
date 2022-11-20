@@ -36,11 +36,11 @@ public class NotifySettingCommand extends TippieCommand implements Listener {
             if (entry.get(0).notifySetting()) {
                 player.sendMessage("Toggled notify for vanished players OFF");
                 storage.setNotifySetting(player.getUniqueId(), false);
-                KimiVanish.getPlugin(KimiVanish.class).getVanishedPlayer().notifyPlayers.remove(player.getUniqueId());
+                KimiVanish.getPlugin(KimiVanish.class).getVanishManager().notifyPlayers.remove(player.getUniqueId());
             } else {
                 player.sendMessage("Toggled notify for vanished players ON");
                 storage.setNotifySetting(player.getUniqueId(), true);
-                KimiVanish.getPlugin(KimiVanish.class).getVanishedPlayer().notifyPlayers.add(player.getUniqueId());
+                KimiVanish.getPlugin(KimiVanish.class).getVanishManager().notifyPlayers.add(player.getUniqueId());
             }
         });
     }
@@ -54,7 +54,7 @@ public class NotifySettingCommand extends TippieCommand implements Listener {
     }
 
     private boolean shouldNotify(Player player) {
-        return KimiVanish.getPlugin(KimiVanish.class).getVanishedPlayer().notifyPlayers.contains(player.getUniqueId());
+        return KimiVanish.getPlugin(KimiVanish.class).getVanishManager().notifyPlayers.contains(player.getUniqueId());
     }
 
     @EventHandler
@@ -64,13 +64,13 @@ public class NotifySettingCommand extends TippieCommand implements Listener {
                 return;
 
             if (entry.get(0).notifySetting()) {
-                KimiVanish.getPlugin(KimiVanish.class).getVanishedPlayer().notifyPlayers.add(event.getPlayer().getUniqueId());
+                KimiVanish.getPlugin(KimiVanish.class).getVanishManager().notifyPlayers.add(event.getPlayer().getUniqueId());
             }
         });
     }
 
     @EventHandler
     private void onPlayerLeave(PlayerQuitEvent event) {
-        KimiVanish.getPlugin(KimiVanish.class).getVanishedPlayer().notifyPlayers.remove(event.getPlayer().getUniqueId());
+        KimiVanish.getPlugin(KimiVanish.class).getVanishManager().notifyPlayers.remove(event.getPlayer().getUniqueId());
     }
 }

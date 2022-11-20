@@ -26,7 +26,7 @@ public class HideOtherCommand extends TippieCommand {
             return;
         }
 
-        if (KimiVanish.getPlugin(KimiVanish.class).getVanishedPlayer().vanishedPlayers.containsKey(player.getUniqueId())) {
+        if (KimiVanish.getPlugin(KimiVanish.class).getVanishManager().currentlyVanished.contains(player.getUniqueId())) {
             sender.sendMessage("Unvanished " + player.getName());
             KimiVanish.getPlugin(KimiVanish.class).getHideManager().RemoveVanishStatus(player);
         } else {

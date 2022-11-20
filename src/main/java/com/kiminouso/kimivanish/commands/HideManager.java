@@ -11,92 +11,31 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerJoinEvent;
-import org.bukkit.permissions.PermissionAttachmentInfo;
-
-import java.util.*;
-import java.util.logging.Level;
+import org.bukkit.event.player.PlayerQuitEvent;
 
 public class HideManager implements Listener {
-    private final Set<UUID> vanishLevelZero = new HashSet<>();
-    private final Set<UUID> vanishLevelOne = new HashSet<>();
-    private final Set<UUID> vanishLevelTwo = new HashSet<>();
-    private final Set<UUID> vanishLevelThree = new HashSet<>();
-    private final Set<UUID> vanishLevelFour = new HashSet<>();
-
-    private BossBar vanishedBossBar = Bukkit.createBossBar("§c§lYOU ARE IN VANISH", BarColor.WHITE, BarStyle.SOLID);
+    private final BossBar vanishedBossBar = Bukkit.createBossBar("§c§lYOU ARE IN VANISH", BarColor.WHITE, BarStyle.SOLID);
 
     public void VanishPlayer(Player player) {
-        // Hide player from everyone online and add to a list
         Bukkit.getOnlinePlayers().forEach(p -> p.hidePlayer(KimiVanish.getPlugin(KimiVanish.class), player));
-        KimiVanish.getPlugin(KimiVanish.class).getVanishedPlayer().addPlayer(player, 1);
         vanishedBossBar.addPlayer(player);
-        vanishLevelZero.add(player.getUniqueId());
+
+        KimiVanish.getPlugin(KimiVanish.class).getVanishManager().vanishLevels.tailMap(checkLevel(player),true).values().forEach(sublist -> sublist.forEach(p -> player.showPlayer(KimiVanish.getPlugin(KimiVanish.class), p)));
+        KimiVanish.getPlugin(KimiVanish.class).getVanishManager().currentlyVanished.add(player.getUniqueId());
 
         if (Bukkit.getServer().getPluginManager().getPlugin("Essentials") != null) {
             Essentials essentials = Essentials.getPlugin(Essentials.class);
             User essentialsUser = essentials.getUser(player.getUniqueId());
             essentialsUser.setHidden(true);
         }
-
-        // Un-hide player from other staff members
-        switch (checkLevel(player)) {
-            case 1 -> {
-                vanishLevelOne.add(player.getUniqueId());
-                vanishLevelZero.add(player.getUniqueId());
-            }
-            case 2 -> {
-                vanishLevelOne.add(player.getUniqueId());
-                vanishLevelZero.add(player.getUniqueId());
-                vanishLevelTwo.add(player.getUniqueId());
-            }
-            case 3 -> {
-                vanishLevelThree.add(player.getUniqueId());
-                vanishLevelTwo.add(player.getUniqueId());
-                vanishLevelOne.add(player.getUniqueId());
-                vanishLevelZero.add(player.getUniqueId());
-            }
-            case 4 -> {
-                vanishLevelFour.add(player.getUniqueId());
-                vanishLevelThree.add(player.getUniqueId());
-                vanishLevelTwo.add(player.getUniqueId());
-                vanishLevelOne.add(player.getUniqueId());
-                vanishLevelZero.add(player.getUniqueId());
-            }
-            default -> vanishLevelZero.add(player.getUniqueId());
-        }
-
-        ShowPlayers(player, vanishLevelZero);
-        ShowPlayers(vanishLevelZero, vanishLevelOne);
-        ShowPlayers(player, vanishLevelOne);
-        ShowPlayers(vanishLevelOne, vanishLevelTwo);
-        ShowPlayers(player, vanishLevelTwo);
-        ShowPlayers(vanishLevelTwo, vanishLevelThree);
-        ShowPlayers(player, vanishLevelThree);
-        ShowPlayers(vanishLevelThree, vanishLevelFour);
-        ShowPlayers(player, vanishLevelFour);
-    }
-
-    private void ShowPlayers(Set<UUID> hidden, Set<UUID> viewer) {
-        hidden.forEach(level -> viewer.forEach(targetLevel -> Bukkit.getPlayer(level).showPlayer(KimiVanish.getPlugin(KimiVanish.class), Bukkit.getPlayer(targetLevel))));
-    }
-
-    private void ShowPlayers(Player self, Set<UUID> others) {
-        others.forEach(uuid -> {
-            if (Bukkit.getPlayer(uuid) != self) {
-                Bukkit.getPlayer(uuid).showPlayer(KimiVanish.getPlugin(KimiVanish.class), self);
-            }
-        });
     }
 
     public void RemoveVanishStatus(Player player) {
         Bukkit.getOnlinePlayers().stream().filter(viewer -> viewer != player).forEach(viewer -> viewer.showPlayer(KimiVanish.getPlugin(KimiVanish.class), player));
-        KimiVanish.getPlugin(KimiVanish.class).getVanishedPlayer().removePlayer(player);
+        KimiVanish.getPlugin(KimiVanish.class).getVanishManager().removePlayer(player);
         vanishedBossBar.removePlayer(player);
-        vanishLevelZero.remove(player.getUniqueId());
-        vanishLevelOne.remove(player.getUniqueId());
-        vanishLevelTwo.remove(player.getUniqueId());
-        vanishLevelThree.remove(player.getUniqueId());
-        vanishLevelFour.remove(player.getUniqueId());
+
+        KimiVanish.getPlugin(KimiVanish.class).getVanishManager().currentlyVanished.remove(player.getUniqueId());
 
         if (Bukkit.getServer().getPluginManager().getPlugin("Essentials") != null) {
             Essentials essentials = Essentials.getPlugin(Essentials.class);
@@ -115,18 +54,19 @@ public class HideManager implements Listener {
 
     @EventHandler
     private void onPlayerJoin(PlayerJoinEvent event) {
-        KimiVanish.getPlugin(KimiVanish.class).getVanishedPlayer().vanishedPlayers.keySet().forEach(key -> {
-            Bukkit.getOnlinePlayers().forEach(p -> p.hidePlayer(KimiVanish.getPlugin(KimiVanish.class), Bukkit.getPlayer(key)));
+        KimiVanish.getPlugin(KimiVanish.class).getVanishManager().addPlayer(event.getPlayer(), checkLevel(event.getPlayer()));
+        KimiVanish.getPlugin(KimiVanish.class).getVanishManager().currentlyVanished.forEach(uuid -> {
+            event.getPlayer().hidePlayer(KimiVanish.getPlugin(KimiVanish.class), Bukkit.getPlayer(uuid));
         });
 
-        ShowPlayers(event.getPlayer(), vanishLevelZero);
-        ShowPlayers(vanishLevelZero, vanishLevelOne);
-        ShowPlayers(event.getPlayer(), vanishLevelOne);
-        ShowPlayers(vanishLevelOne, vanishLevelTwo);
-        ShowPlayers(event.getPlayer(), vanishLevelTwo);
-        ShowPlayers(vanishLevelTwo, vanishLevelThree);
-        ShowPlayers(event.getPlayer(), vanishLevelThree);
-        ShowPlayers(vanishLevelThree, vanishLevelFour);
-        ShowPlayers(event.getPlayer(), vanishLevelFour);
+        if (event.getPlayer().hasPermission("kimivanish.hide")) {
+            KimiVanish.getPlugin(KimiVanish.class).getVanishManager().canVanish.add(event.getPlayer().getUniqueId());
+        }
+    }
+
+    @EventHandler
+    private void onPlayerLeave(PlayerQuitEvent event) {
+        KimiVanish.getPlugin(KimiVanish.class).getVanishManager().removePlayer(event.getPlayer());
+        KimiVanish.getPlugin(KimiVanish.class).getVanishManager().canVanish.remove(event.getPlayer().getUniqueId());
     }
 }
