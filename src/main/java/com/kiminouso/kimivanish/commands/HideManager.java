@@ -3,6 +3,7 @@ package com.kiminouso.kimivanish.commands;
 import com.earth2me.essentials.Essentials;
 import com.earth2me.essentials.User;
 import com.kiminouso.kimivanish.KimiVanish;
+import com.kiminouso.kimivanish.listeners.VanishStatusUpdateEvent;
 import org.bukkit.Bukkit;
 import org.bukkit.boss.BarColor;
 import org.bukkit.boss.BarStyle;
@@ -22,6 +23,9 @@ public class HideManager implements Listener {
 
         KimiVanish.getPlugin(KimiVanish.class).getVanishManager().vanishLevels.tailMap(checkLevel(player),true).values().forEach(sublist -> sublist.forEach(p -> player.showPlayer(KimiVanish.getPlugin(KimiVanish.class), p)));
         KimiVanish.getPlugin(KimiVanish.class).getVanishManager().currentlyVanished.add(player.getUniqueId());
+
+        VanishStatusUpdateEvent event = new VanishStatusUpdateEvent(player, checkLevel(player), true);
+        Bukkit.getPluginManager().callEvent(event);
 
         if (Bukkit.getServer().getPluginManager().getPlugin("Essentials") != null) {
             Essentials essentials = Essentials.getPlugin(Essentials.class);
@@ -43,6 +47,8 @@ public class HideManager implements Listener {
         vanishedBossBar.removePlayer(player);
 
         KimiVanish.getPlugin(KimiVanish.class).getVanishManager().currentlyVanished.remove(player.getUniqueId());
+        VanishStatusUpdateEvent event = new VanishStatusUpdateEvent(player, checkLevel(player), false);
+        Bukkit.getPluginManager().callEvent(event);
 
         if (Bukkit.getServer().getPluginManager().getPlugin("Essentials") != null) {
             Essentials essentials = Essentials.getPlugin(Essentials.class);

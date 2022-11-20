@@ -9,11 +9,13 @@ import org.jetbrains.annotations.NotNull;
 public class VanishStatusUpdateEvent extends PlayerEvent {
     private static final HandlerList HANDLER_LIST = new HandlerList();
     @Getter private final int vanishLevel;
+    @Getter private final boolean vanished;
 
-    public VanishStatusUpdateEvent(Player player, int level) {
+    public VanishStatusUpdateEvent(Player player, int level, boolean isVanished) {
         super(player);
         this.player = player;
         this.vanishLevel = level;
+        this.vanished = isVanished;
     }
 
     public static HandlerList getHandlerList() {
