@@ -1,5 +1,6 @@
 package com.kiminouso.kimivanish.commands.subcommands;
 
+import com.kiminouso.kimivanish.ConfigUtils;
 import com.kiminouso.kimivanish.KimiVanish;
 import me.tippie.tippieutils.commands.TippieCommand;
 import org.bukkit.command.Command;
@@ -12,7 +13,7 @@ public class HideCommand extends TippieCommand {
     public HideCommand() {
         super.subLevel = 1;
         super.name = "hide";
-        super.prefix = "§6[§3KimiVanish§6]§r";
+        super.prefix = ConfigUtils.getMessage("prefix", null);
         super.description = "Hide yourself from other players";
         super.permission = "kimivanish.hide";
     }
@@ -22,11 +23,13 @@ public class HideCommand extends TippieCommand {
         if (!(sender instanceof Player player))
             return;
 
+        int level = KimiVanish.getPlugin(KimiVanish.class).getHideManager().checkLevel(player);
+
         if (KimiVanish.getPlugin(KimiVanish.class).getVanishManager().isVanished(player)) {
-            sender.sendMessage("Unvanished");
+            player.sendMessage(ConfigUtils.getMessage("messages.vanish.unhide", player, String.valueOf(level)));
             KimiVanish.getPlugin(KimiVanish.class).getHideManager().RemoveVanishStatus(player);
         } else {
-            sender.sendMessage("Vanished");
+            player.sendMessage(ConfigUtils.getMessage("messages.vanish.hide", player, String.valueOf(level)));
             KimiVanish.getPlugin(KimiVanish.class).getHideManager().VanishPlayer(player);
         }
     }

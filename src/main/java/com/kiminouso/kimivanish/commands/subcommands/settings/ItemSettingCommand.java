@@ -1,5 +1,6 @@
 package com.kiminouso.kimivanish.commands.subcommands.settings;
 
+import com.kiminouso.kimivanish.ConfigUtils;
 import com.kiminouso.kimivanish.KimiVanish;
 import com.kiminouso.kimivanish.Storage;
 import me.tippie.tippieutils.commands.TippieCommand;
@@ -16,7 +17,7 @@ public class ItemSettingCommand extends TippieCommand implements Listener {
     public ItemSettingCommand() {
         super.subLevel = 2;
         super.name = "items";
-        super.prefix = "§6[§3KimiVanish§6]§r";
+        super.prefix = ConfigUtils.getMessage("prefix", null);
         super.description = "Toggle item pick-up and drop for vanished players";
         super.permission = "kimivanish.settings.item";
     }
@@ -33,11 +34,11 @@ public class ItemSettingCommand extends TippieCommand implements Listener {
                return;
 
            if (entry.get(0).itemSetting()) {
-               player.sendMessage("Toggled item pick up and drop OFF");
+               player.sendMessage(ConfigUtils.getMessage("messages.vanish.item.off", player));
                storage.setItemSetting(player.getUniqueId(), false);
                KimiVanish.getPlugin(KimiVanish.class).getVanishManager().itemPlayers.remove(player.getUniqueId());
            } else {
-               player.sendMessage("Toggled item pick up and drop ON");
+               player.sendMessage(ConfigUtils.getMessage("messages.vanish.item.on", player));
                storage.setItemSetting(player.getUniqueId(), true);
                KimiVanish.getPlugin(KimiVanish.class).getVanishManager().itemPlayers.add(player.getUniqueId());
            }

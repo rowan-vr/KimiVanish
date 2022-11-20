@@ -1,0 +1,23 @@
+prefix: "&8[&9KimiVanish&8]"
+
+messages:
+  vanish:
+    list: "&f &9Level {0}:&8 - &7{1}"
+    help: "&9/{0} {1} &8- &7{2}"
+    bossbar: "&c&lYOU ARE IN VANISH"
+    unhide-all: "&cA plugin reload has forced you to become visible."
+    hideother: "&7You have hidden &a{0}&7 at level &a{1}"
+    hideother-other: "&7You were hidden at level &a{0} &7by &a{1}"
+    hide: "&aYou have been hidden at level &2{0}"
+    unhide: "&cYou are now visible to all players"
+    item:
+      on: "&7You have toggled item pickup & drop &aON"
+      off: "&7You have toggled item pickup & drop &cOFF"
+    interact:
+      on: "&7You have toggled physical interactions &aON"
+      off: "&7You have toggled physical interactions &cOFF"
+    notify:
+      player-unvanished: "&7Player {0} has unvanished."
+      player-vanished: "&7Player {0} has vanished at level {1}"
+      on: "&7You have toggled notifications &aON"
+      off: "&7You have toggled notifications &cOFF"

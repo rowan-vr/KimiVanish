@@ -1,5 +1,6 @@
 package com.kiminouso.kimivanish.commands.subcommands;
 
+import com.kiminouso.kimivanish.ConfigUtils;
 import com.kiminouso.kimivanish.commands.subcommands.settings.InteractSettingCommand;
 import com.kiminouso.kimivanish.commands.subcommands.settings.ItemSettingCommand;
 import com.kiminouso.kimivanish.commands.subcommands.settings.NotifySettingCommand;
@@ -15,7 +16,7 @@ public class SettingsCommand extends TippieCommand {
     public SettingsCommand() {
         super.subLevel = 1;
         super.name = "settings";
-        super.prefix = "§6[§3KimiVanish§6]§r";
+        super.prefix = ConfigUtils.getMessage("prefix", null);
         super.description = "Edit your vanish settings";
         super.permission = "kimivanish.settings";
 
@@ -34,7 +35,7 @@ public class SettingsCommand extends TippieCommand {
             if (!player.hasPermission(cmd.getPermission()))
                 return;
 
-            TextComponent helpMessage = new TextComponent("§7 - §6/" + label + " " + cmd.getName() + "§e - " + cmd.getDescription());
+            TextComponent helpMessage = new TextComponent(ConfigUtils.getMessage("messages.vanish.help", false));
             helpMessage.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new Text("§7Click to execute command.")));
             helpMessage.setClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/" + label + " " + cmd.getName()));
             player.spigot().sendMessage(helpMessage);

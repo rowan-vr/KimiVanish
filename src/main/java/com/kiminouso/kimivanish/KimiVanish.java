@@ -18,15 +18,15 @@ public final class KimiVanish extends JavaPlugin {
     private VanishManager vanishManager;
     @Getter
     private HideManager hideManager;
-
     private VanishCommand vanishCommand;
     private ItemSettingCommand itemSettingCommand;
     private NotifySettingCommand notifySettingCommand;
     private InteractSettingCommand interactSettingCommand;
 
-
     @Override
     public void onEnable() {
+        saveDefaultConfig();
+
         vanishManager = new VanishManager();
         vanishCommand = new VanishCommand();
         hideManager = new HideManager();
@@ -66,6 +66,6 @@ public final class KimiVanish extends JavaPlugin {
 
     @Override
     public void onDisable() {
-        hideManager.unhideAll("You have been unvanished due to a reload/restart.");
+        hideManager.unhideAll();
     }
 }

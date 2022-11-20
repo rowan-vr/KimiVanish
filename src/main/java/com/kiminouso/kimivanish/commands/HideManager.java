@@ -2,6 +2,7 @@ package com.kiminouso.kimivanish.commands;
 
 import com.earth2me.essentials.Essentials;
 import com.earth2me.essentials.User;
+import com.kiminouso.kimivanish.ConfigUtils;
 import com.kiminouso.kimivanish.KimiVanish;
 import com.kiminouso.kimivanish.listeners.VanishStatusUpdateEvent;
 import org.bukkit.Bukkit;
@@ -17,7 +18,7 @@ import org.bukkit.event.player.PlayerQuitEvent;
 import java.util.UUID;
 
 public class HideManager implements Listener {
-    private final BossBar vanishedBossBar = Bukkit.createBossBar("§c§lYOU ARE IN VANISH", BarColor.WHITE, BarStyle.SOLID);
+    private final BossBar vanishedBossBar = Bukkit.createBossBar(ConfigUtils.getMessage("messages.vanish.bossbar", false), BarColor.WHITE, BarStyle.SOLID);
 
     public void VanishPlayer(Player player) {
         Bukkit.getOnlinePlayers().forEach(p -> p.hidePlayer(KimiVanish.getPlugin(KimiVanish.class), player));
@@ -97,15 +98,15 @@ public class HideManager implements Listener {
                     return;
 
                 if (event.isVanished()) {
-                    player.sendMessage(event.getPlayer().getName() + " just vanished at level " + event.getVanishLevel());
+                    player.sendMessage(ConfigUtils.getMessage("messages.vanish.notify.player-unvanished", player, player.getName()));
                 } else {
-                    player.sendMessage(event.getPlayer().getName() + " just unvanished");
+                    player.sendMessage(ConfigUtils.getMessage("messages.vanish.notify.player-vanished", player, player.getName(), String.valueOf(checkLevel(player))));
                 }
             });
         });
     }
 
-    public void unhideAll(String reason) {
+    public void unhideAll() {
         for (UUID uuid : KimiVanish.getPlugin(KimiVanish.class).getVanishManager().currentlyVanished) {
             Player player = Bukkit.getPlayer(uuid);
 
@@ -113,7 +114,7 @@ public class HideManager implements Listener {
                 return;
 
             RemoveVanishStatus(player);
-            player.sendMessage(reason);
+            player.sendMessage(ConfigUtils.getMessage("messages.vanish.unhide-all", false));
         }
     }
 }

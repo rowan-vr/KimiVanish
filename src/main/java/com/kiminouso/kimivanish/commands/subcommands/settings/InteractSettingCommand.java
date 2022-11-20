@@ -1,5 +1,6 @@
 package com.kiminouso.kimivanish.commands.subcommands.settings;
 
+import com.kiminouso.kimivanish.ConfigUtils;
 import com.kiminouso.kimivanish.KimiVanish;
 import com.kiminouso.kimivanish.Storage;
 import me.tippie.tippieutils.commands.TippieCommand;
@@ -18,7 +19,7 @@ public class InteractSettingCommand extends TippieCommand implements Listener {
     public InteractSettingCommand() {
         super.subLevel = 2;
         super.name = "interact";
-        super.prefix = "§6[§3KimiVanish§6]§r";
+        super.prefix = ConfigUtils.getMessage("prefix", null);
         super.description = "Toggle physical interactions for vanished players";
         super.permission = "kimivanish.settings.interact";
     }
@@ -35,11 +36,11 @@ public class InteractSettingCommand extends TippieCommand implements Listener {
                 return;
 
             if (entry.get(0).interactSetting()) {
-                player.sendMessage("Toggled physical interactions OFF");
+                player.sendMessage(ConfigUtils.getMessage("messages.vanish.interact.off", player));
                 storage.setInteractSetting(player.getUniqueId(), false);
                 KimiVanish.getPlugin(KimiVanish.class).getVanishManager().interactPlayers.remove(player.getUniqueId());
             } else {
-                player.sendMessage("Toggled physical interactions ON");
+                player.sendMessage(ConfigUtils.getMessage("messages.vanish.interact.on", player));
                 storage.setInteractSetting(player.getUniqueId(), true);
                 KimiVanish.getPlugin(KimiVanish.class).getVanishManager().interactPlayers.add(player.getUniqueId());
             }

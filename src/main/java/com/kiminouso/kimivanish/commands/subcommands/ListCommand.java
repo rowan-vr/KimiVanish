@@ -1,5 +1,6 @@
 package com.kiminouso.kimivanish.commands.subcommands;
 
+import com.kiminouso.kimivanish.ConfigUtils;
 import com.kiminouso.kimivanish.KimiVanish;
 import me.tippie.tippieutils.commands.TippieCommand;
 import org.bukkit.command.Command;
@@ -13,7 +14,7 @@ public class ListCommand extends TippieCommand {
     public ListCommand() {
         super.subLevel = 1;
         super.name = "list";
-        super.prefix = "§6[§3KimiVanish§6]§r";
+        super.prefix = ConfigUtils.getMessage("prefix", null);
         super.description = "List all vanish users";
         super.permission = "kimivanish.list";
     }
@@ -24,7 +25,7 @@ public class ListCommand extends TippieCommand {
             if (value.isEmpty())
                 return;
 
-            sender.sendMessage(key + " - " + value.stream().map(Player::getName).collect(Collectors.joining(", ")));
+            sender.sendMessage(ConfigUtils.getMessage("messages.vanish.list", (Player) sender, String.valueOf(key), value.stream().map(Player::getName).collect(Collectors.joining(", "))));
         });
     }
 }

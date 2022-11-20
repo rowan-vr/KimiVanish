@@ -1,5 +1,6 @@
 package com.kiminouso.kimivanish.commands.subcommands.settings;
 
+import com.kiminouso.kimivanish.ConfigUtils;
 import com.kiminouso.kimivanish.KimiVanish;
 import com.kiminouso.kimivanish.Storage;
 import com.kiminouso.kimivanish.listeners.VanishStatusUpdateEvent;
@@ -17,7 +18,7 @@ public class NotifySettingCommand extends TippieCommand implements Listener {
     public NotifySettingCommand() {
         super.subLevel = 2;
         super.name = "notify";
-        super.prefix = "§6[§3KimiVanish§6]§r";
+        super.prefix = ConfigUtils.getMessage("prefix", null);
         super.description = "Toggle notifications for vanished players";
         super.permission = "kimivanish.settings.notify";
     }
@@ -34,23 +35,15 @@ public class NotifySettingCommand extends TippieCommand implements Listener {
                 return;
 
             if (entry.get(0).notifySetting()) {
-                player.sendMessage("Toggled notify for vanished players OFF");
+                player.sendMessage(ConfigUtils.getMessage("messages.vanish.notify.off", player));
                 storage.setNotifySetting(player.getUniqueId(), false);
                 KimiVanish.getPlugin(KimiVanish.class).getVanishManager().notifyPlayers.remove(player.getUniqueId());
             } else {
-                player.sendMessage("Toggled notify for vanished players ON");
+                player.sendMessage(ConfigUtils.getMessage("messages.vanish.notify.on", player));
                 storage.setNotifySetting(player.getUniqueId(), true);
                 KimiVanish.getPlugin(KimiVanish.class).getVanishManager().notifyPlayers.add(player.getUniqueId());
             }
         });
-    }
-
-    @EventHandler
-    private void onVanishStatusChange(VanishStatusUpdateEvent event) {
-        if (!shouldNotify(event.getPlayer()))
-            return;
-
-        event.getPlayer().sendMessage(event.getPlayer().getName() + " vanished at level " + event.getVanishLevel());
     }
 
     private boolean shouldNotify(Player player) {
