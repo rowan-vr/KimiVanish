@@ -14,6 +14,8 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 
+import java.util.UUID;
+
 public class HideManager implements Listener {
     private final BossBar vanishedBossBar = Bukkit.createBossBar("§c§lYOU ARE IN VANISH", BarColor.WHITE, BarStyle.SOLID);
 
@@ -101,5 +103,17 @@ public class HideManager implements Listener {
                 }
             });
         });
+    }
+
+    public void unhideAll(String reason) {
+        for (UUID uuid : KimiVanish.getPlugin(KimiVanish.class).getVanishManager().currentlyVanished) {
+            Player player = Bukkit.getPlayer(uuid);
+
+            if (player == null)
+                return;
+
+            RemoveVanishStatus(player);
+            player.sendMessage(reason);
+        }
     }
 }

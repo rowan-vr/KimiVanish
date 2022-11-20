@@ -66,8 +66,6 @@ public final class KimiVanish extends JavaPlugin {
 
     @Override
     public void onDisable() {
-        // Plugin shutdown logic
+        hideManager.unhideAll("You have been unvanished due to a reload/restart.");
     }
-
-    // TODO: Add boss bar task
 }
