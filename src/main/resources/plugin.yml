@@ -12,7 +12,10 @@ commands:
   vanish:
     description: "Base Vanish command"
     permission: kimivanish.use
+    aliases:
+      - v
+      - kv
 
 permissions:
-  kimivanish.use:
+  kimivanish.hide:
     default: op

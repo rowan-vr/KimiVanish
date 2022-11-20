@@ -17,7 +17,7 @@ public class Storage extends SQLStorage {
     private final KimiVanish plugin;
 
     public Storage(KimiVanish plugin){
-        super(plugin, org.h2.Driver.load(), SQLType.H2, new File(plugin.getDataFolder(), "synced-users"));
+        super(plugin, org.h2.Driver.load(), SQLType.H2, new File(plugin.getDataFolder(), "user-preferences"));
 
         this.plugin = plugin;
 
@@ -28,7 +28,7 @@ public class Storage extends SQLStorage {
         }
     }
 
-    @SqlQuery("SELECT * FROM VANISH_USERS WHERE VANISH_USER = ?")
+    @SqlQuery("SELECT * FROM USER_PREFERENCES WHERE VANISH_USER = ?")
     public CompletableFuture<List<VanishUser>> findVanishUser(UUID target) {
         return prepareStatement((stmt) -> {
             try {
@@ -54,7 +54,7 @@ public class Storage extends SQLStorage {
         });
     }
 
-    @SqlQuery("UPDATE VANISH_USERS SET ITEM_SETTING = ? WHERE VANISH_USER = ?")
+    @SqlQuery("UPDATE USER_PREFERENCES SET ITEM_SETTING = ? WHERE VANISH_USER = ?")
     public CompletableFuture<Void> setItemSetting(UUID uuid, boolean setting) {
         return prepareStatement((stmt) -> {
             try {
@@ -71,7 +71,7 @@ public class Storage extends SQLStorage {
         });
     }
 
-    @SqlQuery("UPDATE VANISH_USERS SET INTERACT_SETTING = ? WHERE VANISH_USER = ?")
+    @SqlQuery("UPDATE USER_PREFERENCES SET INTERACT_SETTING = ? WHERE VANISH_USER = ?")
     public CompletableFuture<Void> setInteractSetting(UUID uuid, boolean setting) {
         return prepareStatement((stmt) -> {
             try {
@@ -88,7 +88,7 @@ public class Storage extends SQLStorage {
         });
     }
 
-    @SqlQuery("UPDATE VANISH_USERS SET NOTIFY_SETTING = ? WHERE VANISH_USER = ?")
+    @SqlQuery("UPDATE USER_PREFERENCES SET NOTIFY_SETTING = ? WHERE VANISH_USER = ?")
     public CompletableFuture<Void> setNotifySetting(UUID uuid, boolean setting) {
         return prepareStatement((stmt) -> {
             try {
@@ -105,7 +105,7 @@ public class Storage extends SQLStorage {
         });
     }
 
-    @SqlQuery("INSERT INTO VANISH_SETTINGS (VANISH_USER, ITEM_SETTING, INTERACT_SETTING, NOTIFY_SETTING) VALUES (?, ?, ?, ?)")
+    @SqlQuery("INSERT INTO USER_PREFERENCES (VANISH_USER, ITEM_SETTING, INTERACT_SETTING, NOTIFY_SETTING) VALUES (?, ?, ?, ?)")
     public CompletableFuture<Void> registerVanishUser(UUID uuid, boolean itemSetting, boolean interactSetting, boolean notifySetting) {
         return prepareStatement((stmt) -> {
             try {

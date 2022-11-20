@@ -28,6 +28,13 @@ public class HideManager implements Listener {
             User essentialsUser = essentials.getUser(player.getUniqueId());
             essentialsUser.setHidden(true);
         }
+
+        KimiVanish.getPlugin(KimiVanish.class).getStorage().findVanishUser(player.getUniqueId()).thenAccept(entry -> {
+           if (!entry.isEmpty())
+               return;
+
+           KimiVanish.getPlugin(KimiVanish.class).getStorage().registerVanishUser(player.getUniqueId(), false, false ,false);
+        });
     }
 
     public void RemoveVanishStatus(Player player) {
