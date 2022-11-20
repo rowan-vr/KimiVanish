@@ -2,6 +2,7 @@ package com.kiminouso.kimivanish.commands;
 
 import com.kiminouso.kimivanish.commands.subcommands.HideCommand;
 import com.kiminouso.kimivanish.commands.subcommands.HideOtherCommand;
+import com.kiminouso.kimivanish.commands.subcommands.ListCommand;
 import com.kiminouso.kimivanish.commands.subcommands.SettingsCommand;
 import me.tippie.tippieutils.commands.TippieCommand;
 import net.md_5.bungee.api.chat.ClickEvent;
@@ -18,6 +19,7 @@ public class VanishCommand extends TippieCommand {
         super.getSubCommands().add(new HideCommand());
         super.getSubCommands().add(new HideOtherCommand());
         super.getSubCommands().add(new SettingsCommand());
+        super.getSubCommands().add(new ListCommand());
     }
 
     @Override
