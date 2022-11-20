@@ -82,4 +82,24 @@ public class HideManager implements Listener {
         KimiVanish.getPlugin(KimiVanish.class).getVanishManager().removePlayer(event.getPlayer());
         KimiVanish.getPlugin(KimiVanish.class).getVanishManager().canVanish.remove(event.getPlayer().getUniqueId());
     }
+
+    @EventHandler
+    private void onVanish(VanishStatusUpdateEvent event) {
+        KimiVanish.getPlugin(KimiVanish.class).getStorage().findVanishUser(event.getPlayer().getUniqueId()).thenAccept((entry) -> {
+            if (entry.isEmpty() || !entry.get(0).notifySetting())
+                return;
+
+            KimiVanish.getPlugin(KimiVanish.class).getVanishManager().notifyPlayers.forEach(p -> {
+                Player player = Bukkit.getPlayer(p);
+                if (player == null)
+                    return;
+
+                if (event.isVanished()) {
+                    player.sendMessage(event.getPlayer().getName() + " just vanished at level " + event.getVanishLevel());
+                } else {
+                    player.sendMessage(event.getPlayer().getName() + " just unvanished");
+                }
+            });
+        });
+    }
 }
