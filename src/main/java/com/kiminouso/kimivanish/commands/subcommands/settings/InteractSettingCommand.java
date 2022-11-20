@@ -37,11 +37,11 @@ public class InteractSettingCommand extends TippieCommand implements Listener {
             if (entry.get(0).interactSetting()) {
                 player.sendMessage("Toggled physical interactions OFF");
                 storage.setInteractSetting(player.getUniqueId(), false);
-                KimiVanish.getPlugin(KimiVanish.class).getVanishedPlayer().interactPlayers.remove(player.getUniqueId());
+                KimiVanish.getPlugin(KimiVanish.class).getVanishManager().interactPlayers.remove(player.getUniqueId());
             } else {
                 player.sendMessage("Toggled physical interactions ON");
                 storage.setInteractSetting(player.getUniqueId(), true);
-                KimiVanish.getPlugin(KimiVanish.class).getVanishedPlayer().interactPlayers.add(player.getUniqueId());
+                KimiVanish.getPlugin(KimiVanish.class).getVanishManager().interactPlayers.add(player.getUniqueId());
             }
         });
     }
@@ -51,7 +51,7 @@ public class InteractSettingCommand extends TippieCommand implements Listener {
         if (canInteract(event.getPlayer()))
             return;
 
-        if (KimiVanish.getPlugin(KimiVanish.class).getVanishedPlayer().isVanished(event.getPlayer())) {
+        if (KimiVanish.getPlugin(KimiVanish.class).getVanishManager().isVanished(event.getPlayer())) {
             if (event.getAction().equals(Action.PHYSICAL) && event.getClickedBlock() != null) {
                 event.setCancelled(true);
             }
@@ -59,7 +59,7 @@ public class InteractSettingCommand extends TippieCommand implements Listener {
     }
 
     private boolean canInteract(Player player) {
-        return KimiVanish.getPlugin(KimiVanish.class).getVanishedPlayer().interactPlayers.contains(player.getUniqueId());
+        return KimiVanish.getPlugin(KimiVanish.class).getVanishManager().interactPlayers.contains(player.getUniqueId());
     }
 
     @EventHandler
@@ -69,13 +69,13 @@ public class InteractSettingCommand extends TippieCommand implements Listener {
                 return;
 
             if (entry.get(0).interactSetting()) {
-                KimiVanish.getPlugin(KimiVanish.class).getVanishedPlayer().interactPlayers.add(event.getPlayer().getUniqueId());
+                KimiVanish.getPlugin(KimiVanish.class).getVanishManager().interactPlayers.add(event.getPlayer().getUniqueId());
             }
         });
     }
 
     @EventHandler
     private void onPlayerLeave(PlayerQuitEvent event) {
-        KimiVanish.getPlugin(KimiVanish.class).getVanishedPlayer().interactPlayers.remove(event.getPlayer().getUniqueId());
+        KimiVanish.getPlugin(KimiVanish.class).getVanishManager().interactPlayers.remove(event.getPlayer().getUniqueId());
     }
 }

@@ -1,7 +1,5 @@
 package com.kiminouso.kimivanish.commands.subcommands;
 
-import com.earth2me.essentials.Essentials;
-import com.earth2me.essentials.User;
 import com.kiminouso.kimivanish.KimiVanish;
 import me.tippie.tippieutils.commands.TippieCommand;
 import org.bukkit.command.Command;
@@ -24,7 +22,7 @@ public class HideCommand extends TippieCommand {
         if (!(sender instanceof Player player))
             return;
 
-        if (KimiVanish.getPlugin(KimiVanish.class).getVanishedPlayer().vanishedPlayers.containsKey(player.getUniqueId())) {
+        if (KimiVanish.getPlugin(KimiVanish.class).getVanishManager().isVanished(player)) {
             sender.sendMessage("Unvanished");
             KimiVanish.getPlugin(KimiVanish.class).getHideManager().RemoveVanishStatus(player);
         } else {

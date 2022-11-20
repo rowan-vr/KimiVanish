@@ -50,7 +50,7 @@ public class VanishPlaceholder extends PlaceholderExpansion {
         }
 
         if (params.equalsIgnoreCase("vanished")) {
-            if (KimiVanish.getPlugin(KimiVanish.class).getVanishedPlayer().isVanished(player.getPlayer())) {
+            if (KimiVanish.getPlugin(KimiVanish.class).getVanishManager().isVanished(player.getPlayer())) {
                 return "true";
             } else {
                 return "false";

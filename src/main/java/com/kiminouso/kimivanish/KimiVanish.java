@@ -12,9 +12,12 @@ import org.bukkit.plugin.java.JavaPlugin;
 import java.util.logging.Level;
 
 public final class KimiVanish extends JavaPlugin {
-    @Getter private Storage storage;
-    @Getter private VanishedPlayer vanishedPlayer;
-    @Getter private HideManager hideManager;
+    @Getter
+    private Storage storage;
+    @Getter
+    private VanishManager vanishManager;
+    @Getter
+    private HideManager hideManager;
 
     private VanishCommand vanishCommand;
     private ItemSettingCommand itemSettingCommand;
@@ -24,7 +27,7 @@ public final class KimiVanish extends JavaPlugin {
 
     @Override
     public void onEnable() {
-        vanishedPlayer = new VanishedPlayer();
+        vanishManager = new VanishManager();
         vanishCommand = new VanishCommand();
         hideManager = new HideManager();
         itemSettingCommand = new ItemSettingCommand();
@@ -37,6 +40,7 @@ public final class KimiVanish extends JavaPlugin {
         Bukkit.getServer().getPluginManager().registerEvents(this.itemSettingCommand, this);
         Bukkit.getServer().getPluginManager().registerEvents(this.notifySettingCommand, this);
         Bukkit.getServer().getPluginManager().registerEvents(this.interactSettingCommand, this);
+        Bukkit.getServer().getPluginManager().registerEvents(this.hideManager, this);
 
         if (Bukkit.getServer().getPluginManager().getPlugin("PlaceholderAPI") != null) {
             Bukkit.getServer().getLogger().log(Level.INFO, "PlaceholderAPI has been found! Enabling placeholder expansion...");
@@ -50,6 +54,14 @@ public final class KimiVanish extends JavaPlugin {
         } else {
             Bukkit.getServer().getLogger().log(Level.SEVERE, "Could not find Essentials! Essentials hook is disabled.");
         }
+
+        Bukkit.getScheduler().runTaskTimer(this, () -> vanishManager.canVanish.forEach(player -> {
+            int level = hideManager.checkLevel(Bukkit.getPlayer(player));
+            vanishManager.vanishLevels.tailMap(level, true)
+                    .values()
+                    .forEach(sublist -> sublist.forEach(p -> Bukkit.getPlayer(player).showPlayer(this, p))
+                    );
+        }), 0L, 1L);
     }
 
     @Override
