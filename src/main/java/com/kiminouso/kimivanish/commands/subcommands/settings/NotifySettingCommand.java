@@ -51,18 +51,6 @@ public class NotifySettingCommand extends TippieCommand implements Listener {
     }
 
     @EventHandler
-    private void onPlayerJoin(PlayerJoinEvent event) {
-        KimiVanish.getPlugin(KimiVanish.class).getStorage().findVanishUser(event.getPlayer().getUniqueId()).thenAccept((entry) -> {
-            if (entry.isEmpty())
-                return;
-
-            if (entry.get(0).notifySetting()) {
-                KimiVanish.getPlugin(KimiVanish.class).getVanishManager().notifyPlayers.add(event.getPlayer().getUniqueId());
-            }
-        });
-    }
-
-    @EventHandler
     private void onPlayerLeave(PlayerQuitEvent event) {
         KimiVanish.getPlugin(KimiVanish.class).getVanishManager().notifyPlayers.remove(event.getPlayer().getUniqueId());
     }

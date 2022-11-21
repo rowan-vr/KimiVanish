@@ -45,20 +45,16 @@ public class ListCommand extends TippieCommand {
             KimiVanish.getPlugin(KimiVanish.class).getVanishManager().vanishLevels.forEach((key, value) -> {
                 if (value.isEmpty())
                     return;
-                System.out.println("Attempted list use");
                 player.sendMessage(ConfigUtils.getMessage("messages.vanish.list.chat", player, String.valueOf(key), value.stream().map(Player::getName).collect(Collectors.joining(", "))));
             });
         }
     }
 
     public static void openVanishGui(Player player, Set<UUID> vanished) {
-        System.out.println("Attempted GUI use");
-        System.out.println(vanished);
         GuiBuilder builder = new GuiBuilder(5, "Currently vanished", null);
 
         int count = 0;
         if (vanished.size() > 0) {
-            System.out.println("conditions met");
             for (UUID user : vanished) {
                 Player p = Bukkit.getPlayer(user);
                 if (p == null)

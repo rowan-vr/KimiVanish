@@ -28,16 +28,16 @@ public class SettingsCommand extends TippieCommand {
     }
 
     protected void sendHelpMessage(CommandSender sender, String label, String prefix) {
-        sender.sendMessage(prefix + "§e Setting Subcommands");
-
         if (!(sender instanceof Player player))
             return;
+
+        sender.sendMessage(ConfigUtils.getMessage("messages.vanish.help.settings", player));
 
         getSubCommands().forEach(cmd -> {
             if (!player.hasPermission(cmd.getPermission()))
                 return;
 
-            TextComponent helpMessage = new TextComponent(ConfigUtils.getMessage("messages.vanish.help", false));
+            TextComponent helpMessage = new TextComponent(ConfigUtils.getMessage("messages.vanish.help.commands", player, label, cmd.getName(), cmd.getDescription()));
             helpMessage.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new Text("§7Click to execute command.")));
             helpMessage.setClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/" + label + " " + cmd.getName()));
             player.spigot().sendMessage(helpMessage);

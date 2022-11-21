@@ -64,18 +64,6 @@ public class InteractSettingCommand extends TippieCommand implements Listener {
     }
 
     @EventHandler
-    private void onPlayerJoin(PlayerJoinEvent event) {
-        KimiVanish.getPlugin(KimiVanish.class).getStorage().findVanishUser(event.getPlayer().getUniqueId()).thenAccept((entry) -> {
-            if (entry.isEmpty())
-                return;
-
-            if (entry.get(0).interactSetting()) {
-                KimiVanish.getPlugin(KimiVanish.class).getVanishManager().interactPlayers.add(event.getPlayer().getUniqueId());
-            }
-        });
-    }
-
-    @EventHandler
     private void onPlayerLeave(PlayerQuitEvent event) {
         KimiVanish.getPlugin(KimiVanish.class).getVanishManager().interactPlayers.remove(event.getPlayer().getUniqueId());
     }

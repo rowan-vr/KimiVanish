@@ -75,18 +75,6 @@ public class LocationSettingCommand extends TippieCommand implements Listener {
     }
 
     @EventHandler
-    private void onPlayerJoin(PlayerJoinEvent event) {
-        KimiVanish.getPlugin(KimiVanish.class).getStorage().findVanishUser(event.getPlayer().getUniqueId()).thenAccept((entry) -> {
-            if (entry.isEmpty())
-                return;
-
-            if (entry.get(0).locationSetting()) {
-                KimiVanish.getPlugin(KimiVanish.class).getVanishManager().locationPlayers.add(event.getPlayer().getUniqueId());
-            }
-        });
-    }
-
-    @EventHandler
     private void onPlayerLeave(PlayerQuitEvent event) {
         savedLocations.remove(event.getPlayer().getUniqueId());
         KimiVanish.getPlugin(KimiVanish.class).getVanishManager().locationPlayers.remove(event.getPlayer().getUniqueId());

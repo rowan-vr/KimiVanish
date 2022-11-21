@@ -15,7 +15,10 @@ messages:
     list:
       chat: "&f &9Level {0}:&8 - &7{1}"
       empty: "&cNo one is currently in vanish."
-    help: "&9/{0} {1} &8- &7{2}"
+    help:
+      setting-header: "&9Setting Subcommands"
+      general-header: "&9Commands"
+      commands: "&9/{0} {1} &8- &7{2}"
     bossbar: "&c&lYOU ARE IN VANISH"
     unhide-all: "&cA plugin reload has forced you to become visible."
     hideother: "&7You have hidden &a{0}&7 at level &a{1}"

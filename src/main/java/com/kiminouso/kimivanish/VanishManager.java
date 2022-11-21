@@ -1,7 +1,10 @@
 package com.kiminouso.kimivanish;
 
+import com.google.common.eventbus.AllowConcurrentEvents;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
+import org.bukkit.potion.PotionEffect;
+import org.bukkit.potion.PotionEffectType;
 
 import java.util.*;
 
@@ -14,6 +17,15 @@ public class VanishManager {
     public final Set<UUID> itemPlayers = new HashSet<>();
     public final Set<UUID> locationPlayers = new HashSet<>();
 
+    public void clearLists() {
+        vanishLevels.clear();
+        canVanish.clear();
+        interactPlayers.clear();
+        notifyPlayers.clear();
+        itemPlayers.clear();
+        locationPlayers.clear();
+    }
+
     public void addPlayer(Player player, int level) {
         vanishLevels.compute(level,(key, value) -> {
             if (value == null) {
@@ -24,6 +36,26 @@ public class VanishManager {
         });
 
         vanishLevels.headMap(level,true).values().forEach(sublist -> sublist.forEach(p -> player.showPlayer(KimiVanish.getPlugin(KimiVanish.class), p)));
+
+        KimiVanish.getPlugin(KimiVanish.class).getStorage().findVanishUser(player.getUniqueId()).thenAccept((entry) -> {
+            if (entry.isEmpty())
+                return;
+
+            if (entry.get(0).interactSetting())
+                KimiVanish.getPlugin(KimiVanish.class).getVanishManager().interactPlayers.add(player.getUniqueId());
+
+            if (entry.get(0).notifySetting())
+                KimiVanish.getPlugin(KimiVanish.class).getVanishManager().notifyPlayers.add(player.getUniqueId());
+
+            if (entry.get(0).itemSetting())
+                KimiVanish.getPlugin(KimiVanish.class).getVanishManager().itemPlayers.add(player.getUniqueId());
+
+            if (entry.get(0).locationSetting())
+                KimiVanish.getPlugin(KimiVanish.class).getVanishManager().locationPlayers.add(player.getUniqueId());
+
+            if (entry.get(0).nightVisionSetting())
+                player.addPotionEffect(new PotionEffect(PotionEffectType.NIGHT_VISION, Integer.MAX_VALUE, 0, true,false,false));
+        });
     }
 
     public void removePlayer(Player player) {
