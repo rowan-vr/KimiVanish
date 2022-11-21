@@ -4,6 +4,10 @@ settings:
   vanish:
     bossbar: true
     actionbar: false
+    protect-players: true
+    protect-recently-unvanished: true
+    hide-connection-message: true
+    prevent-hunger-loss: true
 
 messages:
   vanish:

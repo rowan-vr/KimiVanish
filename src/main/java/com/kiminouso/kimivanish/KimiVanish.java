@@ -2,9 +2,7 @@ package com.kiminouso.kimivanish;
 
 import com.kiminouso.kimivanish.commands.HideManager;
 import com.kiminouso.kimivanish.commands.VanishCommand;
-import com.kiminouso.kimivanish.commands.subcommands.settings.InteractSettingCommand;
-import com.kiminouso.kimivanish.commands.subcommands.settings.ItemSettingCommand;
-import com.kiminouso.kimivanish.commands.subcommands.settings.NotifySettingCommand;
+import com.kiminouso.kimivanish.commands.subcommands.settings.*;
 import lombok.Getter;
 import org.bukkit.Bukkit;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -23,6 +21,9 @@ public final class KimiVanish extends JavaPlugin {
     private ItemSettingCommand itemSettingCommand;
     private NotifySettingCommand notifySettingCommand;
     private InteractSettingCommand interactSettingCommand;
+    private NightvisionSettingCommand nightvisionSettingCommand;
+    private LocationSettingCommand locationSettingCommand;
+    private VanishListeners vanishListeners;
 
     @Override
     public void onEnable() {
@@ -31,16 +32,22 @@ public final class KimiVanish extends JavaPlugin {
         vanishManager = new VanishManager();
         vanishCommand = new VanishCommand();
         hideManager = new HideManager();
+        vanishListeners = new VanishListeners();
         itemSettingCommand = new ItemSettingCommand();
         notifySettingCommand = new NotifySettingCommand();
         interactSettingCommand = new InteractSettingCommand();
+        locationSettingCommand = new LocationSettingCommand();
+        nightvisionSettingCommand = new NightvisionSettingCommand();
         storage = new Storage(this);
 
         Bukkit.getPluginCommand("vanish").setExecutor(this.vanishCommand);
         Bukkit.getPluginCommand("vanish").setTabCompleter(this.vanishCommand);
+        Bukkit.getServer().getPluginManager().registerEvents(this.vanishListeners, this);
         Bukkit.getServer().getPluginManager().registerEvents(this.itemSettingCommand, this);
         Bukkit.getServer().getPluginManager().registerEvents(this.notifySettingCommand, this);
         Bukkit.getServer().getPluginManager().registerEvents(this.interactSettingCommand, this);
+        Bukkit.getServer().getPluginManager().registerEvents(this.nightvisionSettingCommand, this);
+        Bukkit.getServer().getPluginManager().registerEvents(this.locationSettingCommand, this);
         Bukkit.getServer().getPluginManager().registerEvents(this.hideManager, this);
 
         if (Bukkit.getServer().getPluginManager().getPlugin("PlaceholderAPI") != null) {
