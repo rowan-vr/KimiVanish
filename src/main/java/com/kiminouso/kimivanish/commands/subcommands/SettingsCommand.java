@@ -3,6 +3,7 @@ package com.kiminouso.kimivanish.commands.subcommands;
 import com.kiminouso.kimivanish.ConfigUtils;
 import com.kiminouso.kimivanish.commands.subcommands.settings.InteractSettingCommand;
 import com.kiminouso.kimivanish.commands.subcommands.settings.ItemSettingCommand;
+import com.kiminouso.kimivanish.commands.subcommands.settings.LocationSettingCommand;
 import com.kiminouso.kimivanish.commands.subcommands.settings.NotifySettingCommand;
 import me.tippie.tippieutils.commands.TippieCommand;
 import net.md_5.bungee.api.chat.ClickEvent;
@@ -16,13 +17,14 @@ public class SettingsCommand extends TippieCommand {
     public SettingsCommand() {
         super.subLevel = 1;
         super.name = "settings";
-        super.prefix = ConfigUtils.getMessage("prefix", null);
+        super.prefix = ConfigUtils.getMessage("prefix", false);
         super.description = "Edit your vanish settings";
         super.permission = "kimivanish.settings";
 
         super.getSubCommands().add(new InteractSettingCommand());
         super.getSubCommands().add(new NotifySettingCommand());
         super.getSubCommands().add(new ItemSettingCommand());
+        super.getSubCommands().add(new LocationSettingCommand());
     }
 
     protected void sendHelpMessage(CommandSender sender, String label, String prefix) {

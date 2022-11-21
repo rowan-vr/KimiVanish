@@ -17,7 +17,7 @@ public class ItemSettingCommand extends TippieCommand implements Listener {
     public ItemSettingCommand() {
         super.subLevel = 2;
         super.name = "items";
-        super.prefix = ConfigUtils.getMessage("prefix", null);
+        super.prefix = ConfigUtils.getMessage("prefix", false);
         super.description = "Toggle item pick-up and drop for vanished players";
         super.permission = "kimivanish.settings.item";
     }

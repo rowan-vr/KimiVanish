@@ -19,7 +19,7 @@ public class InteractSettingCommand extends TippieCommand implements Listener {
     public InteractSettingCommand() {
         super.subLevel = 2;
         super.name = "interact";
-        super.prefix = ConfigUtils.getMessage("prefix", null);
+        super.prefix = ConfigUtils.getMessage("prefix", false);
         super.description = "Toggle physical interactions for vanished players";
         super.permission = "kimivanish.settings.interact";
     }

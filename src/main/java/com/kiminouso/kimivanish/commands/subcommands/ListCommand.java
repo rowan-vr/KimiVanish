@@ -14,7 +14,7 @@ public class ListCommand extends TippieCommand {
     public ListCommand() {
         super.subLevel = 1;
         super.name = "list";
-        super.prefix = ConfigUtils.getMessage("prefix", null);
+        super.prefix = ConfigUtils.getMessage("prefix", false);
         super.description = "List all vanish users";
         super.permission = "kimivanish.list";
     }

@@ -12,6 +12,7 @@ public class VanishManager {
     public final Set<UUID> interactPlayers = new HashSet<>();
     public final Set<UUID> notifyPlayers = new HashSet<>();
     public final Set<UUID> itemPlayers = new HashSet<>();
+    public final Set<UUID> locationPlayers = new HashSet<>();
 
     public void addPlayer(Player player, int level) {
         vanishLevels.compute(level,(key, value) -> {

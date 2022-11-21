@@ -13,7 +13,7 @@ public class HideOtherCommand extends TippieCommand {
     public HideOtherCommand() {
         super.subLevel = 1;
         super.name = "hideother";
-        super.prefix = ConfigUtils.getMessage("prefix", null);
+        super.prefix = ConfigUtils.getMessage("prefix", false);
         super.description = "Hide someone else from other players";
         super.permission = "kimivanish.hide.others";
     }

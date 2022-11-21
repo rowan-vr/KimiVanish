@@ -3,7 +3,6 @@ package com.kiminouso.kimivanish.commands.subcommands.settings;
 import com.kiminouso.kimivanish.ConfigUtils;
 import com.kiminouso.kimivanish.KimiVanish;
 import com.kiminouso.kimivanish.Storage;
-import com.kiminouso.kimivanish.listeners.VanishStatusUpdateEvent;
 import me.tippie.tippieutils.commands.TippieCommand;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
@@ -12,15 +11,17 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
+import org.bukkit.potion.PotionEffect;
+import org.bukkit.potion.PotionEffectType;
 import org.jetbrains.annotations.NotNull;
 
-public class NotifySettingCommand extends TippieCommand implements Listener {
-    public NotifySettingCommand() {
+public class NightvisionSettingCommand extends TippieCommand implements Listener {
+    public NightvisionSettingCommand() {
         super.subLevel = 2;
-        super.name = "notify";
+        super.name = "nightvision";
         super.prefix = ConfigUtils.getMessage("prefix", false);
-        super.description = "Toggle notifications for vanished players";
-        super.permission = "kimivanish.settings.notify";
+        super.description = "Toggle nightvision for vanish";
+        super.permission = "kimivanish.settings.nightvision";
     }
 
     @Override
@@ -34,20 +35,16 @@ public class NotifySettingCommand extends TippieCommand implements Listener {
             if (entry.isEmpty())
                 return;
 
-            if (entry.get(0).notifySetting()) {
-                player.sendMessage(ConfigUtils.getMessage("messages.vanish.notify.off", player));
-                storage.setNotifySetting(player.getUniqueId(), false);
-                KimiVanish.getPlugin(KimiVanish.class).getVanishManager().notifyPlayers.remove(player.getUniqueId());
+            if (entry.get(0).nightVisionSetting()) {
+                player.removePotionEffect(PotionEffectType.NIGHT_VISION);
+                storage.setNightvisionSetting(player.getUniqueId(), false);
+                player.sendMessage(ConfigUtils.getMessage("messages.vanish.nightvision.off", player));
             } else {
-                player.sendMessage(ConfigUtils.getMessage("messages.vanish.notify.on", player));
-                storage.setNotifySetting(player.getUniqueId(), true);
-                KimiVanish.getPlugin(KimiVanish.class).getVanishManager().notifyPlayers.add(player.getUniqueId());
+                player.addPotionEffect(new PotionEffect(PotionEffectType.NIGHT_VISION, Integer.MAX_VALUE, 0, true,false,false));
+                storage.setNightvisionSetting(player.getUniqueId(), true);
+                player.sendMessage(ConfigUtils.getMessage("messages.vanish.nightvision.on", player));
             }
         });
-    }
-
-    private boolean shouldNotify(Player player) {
-        return KimiVanish.getPlugin(KimiVanish.class).getVanishManager().notifyPlayers.contains(player.getUniqueId());
     }
 
     @EventHandler
@@ -56,14 +53,17 @@ public class NotifySettingCommand extends TippieCommand implements Listener {
             if (entry.isEmpty())
                 return;
 
-            if (entry.get(0).notifySetting()) {
-                KimiVanish.getPlugin(KimiVanish.class).getVanishManager().notifyPlayers.add(event.getPlayer().getUniqueId());
+            if (entry.get(0).nightVisionSetting()) {
+                event.getPlayer().addPotionEffect(new PotionEffect(PotionEffectType.NIGHT_VISION, Integer.MAX_VALUE, 0, true,false,false));
             }
         });
     }
 
     @EventHandler
     private void onPlayerLeave(PlayerQuitEvent event) {
-        KimiVanish.getPlugin(KimiVanish.class).getVanishManager().notifyPlayers.remove(event.getPlayer().getUniqueId());
+        if (event.getPlayer().hasPotionEffect(PotionEffectType.NIGHT_VISION)) {
+            event.getPlayer().removePotionEffect(PotionEffectType.NIGHT_VISION);
+        }
     }
+
 }
