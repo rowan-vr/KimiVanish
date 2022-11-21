@@ -8,10 +8,13 @@ settings:
     protect-recently-unvanished: true
     hide-connection-message: true
     prevent-hunger-loss: true
+    use-gui-list: true
 
 messages:
   vanish:
-    list: "&f &9Level {0}:&8 - &7{1}"
+    list:
+      chat: "&f &9Level {0}:&8 - &7{1}"
+      empty: "&cNo one is currently in vanish."
     help: "&9/{0} {1} &8- &7{2}"
     bossbar: "&c&lYOU ARE IN VANISH"
     unhide-all: "&cA plugin reload has forced you to become visible."

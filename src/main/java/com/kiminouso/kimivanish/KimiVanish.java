@@ -4,6 +4,7 @@ import com.kiminouso.kimivanish.commands.HideManager;
 import com.kiminouso.kimivanish.commands.VanishCommand;
 import com.kiminouso.kimivanish.commands.subcommands.settings.*;
 import lombok.Getter;
+import me.tippie.tippieutils.guis.GuiManager;
 import org.bukkit.Bukkit;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scheduler.BukkitTask;
@@ -24,6 +25,7 @@ public final class KimiVanish extends JavaPlugin {
     private NightvisionSettingCommand nightvisionSettingCommand;
     private LocationSettingCommand locationSettingCommand;
     private VanishListeners vanishListeners;
+    @Getter private GuiManager guiManager;
 
     @Override
     public void onEnable() {
@@ -38,6 +40,7 @@ public final class KimiVanish extends JavaPlugin {
         interactSettingCommand = new InteractSettingCommand();
         locationSettingCommand = new LocationSettingCommand();
         nightvisionSettingCommand = new NightvisionSettingCommand();
+        guiManager = new GuiManager(this);
         storage = new Storage(this);
 
         Bukkit.getPluginCommand("vanish").setExecutor(this.vanishCommand);

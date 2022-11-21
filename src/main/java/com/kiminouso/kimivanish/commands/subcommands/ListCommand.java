@@ -3,11 +3,19 @@ package com.kiminouso.kimivanish.commands.subcommands;
 import com.kiminouso.kimivanish.ConfigUtils;
 import com.kiminouso.kimivanish.KimiVanish;
 import me.tippie.tippieutils.commands.TippieCommand;
+import me.tippie.tippieutils.guis.GuiBuilder;
+import org.bukkit.Bukkit;
+import org.bukkit.Material;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.SkullMeta;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.List;
+import java.util.Set;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 public class ListCommand extends TippieCommand {
@@ -21,11 +29,64 @@ public class ListCommand extends TippieCommand {
 
     @Override
     public void executes(@NotNull CommandSender sender, @NotNull Command command, @NotNull String label, @NotNull String[] args) throws NoSuchMethodException {
-        KimiVanish.getPlugin(KimiVanish.class).getVanishManager().vanishLevels.forEach((key, value) -> {
-            if (value.isEmpty())
-                return;
+        if (!(sender instanceof Player player))
+            return;
 
-            sender.sendMessage(ConfigUtils.getMessage("messages.vanish.list", (Player) sender, String.valueOf(key), value.stream().map(Player::getName).collect(Collectors.joining(", "))));
-        });
+        var vanished = KimiVanish.getPlugin(KimiVanish.class).getVanishManager().currentlyVanished;
+
+        if (vanished.isEmpty()) {
+            player.sendMessage(ConfigUtils.getMessage("messages.vanish.list.empty", false));
+            return;
+        }
+
+        if (KimiVanish.getPlugin(KimiVanish.class).getConfig().getBoolean("settings.vanish.use-gui-list")) {
+            Bukkit.getScheduler().runTaskLater(KimiVanish.getPlugin(KimiVanish.class), () -> openVanishGui(player, vanished), 10L);
+        } else {
+            KimiVanish.getPlugin(KimiVanish.class).getVanishManager().vanishLevels.forEach((key, value) -> {
+                if (value.isEmpty())
+                    return;
+                System.out.println("Attempted list use");
+                player.sendMessage(ConfigUtils.getMessage("messages.vanish.list.chat", player, String.valueOf(key), value.stream().map(Player::getName).collect(Collectors.joining(", "))));
+            });
+        }
+    }
+
+    public static void openVanishGui(Player player, Set<UUID> vanished) {
+        System.out.println("Attempted GUI use");
+        System.out.println(vanished);
+        GuiBuilder builder = new GuiBuilder(5, "Currently vanished", null);
+
+        int count = 0;
+        if (vanished.size() > 0) {
+            System.out.println("conditions met");
+            for (UUID user : vanished) {
+                Player p = Bukkit.getPlayer(user);
+                if (p == null)
+                    return;
+
+                ItemStack item = new ItemStack(Material.PLAYER_HEAD, 1);
+                SkullMeta skull = (SkullMeta) item.getItemMeta();
+
+                skull.setOwningPlayer(p);
+                skull.setDisplayName("§9" + p.getName());
+                skull.setLore(List.of("§7Level " + KimiVanish.getPlugin(KimiVanish.class).getHideManager().checkLevel(p)));
+                item.setItemMeta(skull);
+
+                builder.setSlot(count, item, (InventoryClickEvent, OpenGUI) -> {
+                    if (InventoryClickEvent.isRightClick() || InventoryClickEvent.isLeftClick() && !InventoryClickEvent.isShiftClick()) {
+                        player.teleport(p);
+                    }
+                    if (InventoryClickEvent.isShiftClick()) {
+                        if (player.hasPermission("kimivanish.hide.others")) {
+                            Bukkit.getScheduler().runTaskLater(KimiVanish.getPlugin(KimiVanish.class), () -> openVanishGui(player, vanished), 10L);
+                            KimiVanish.getPlugin(KimiVanish.class).getHideManager().RemoveVanishStatus(player);
+                            player.sendMessage(ConfigUtils.getMessage("messages.vanish.unhide", false));
+                        }
+                    }
+                });
+                count++;
+            }
+        }
+        builder.open(player, KimiVanish.getPlugin(KimiVanish.class).getGuiManager());
     }
 }
