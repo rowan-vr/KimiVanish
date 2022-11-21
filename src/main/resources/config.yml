@@ -1,5 +1,10 @@
 prefix: "&8[&9KimiVanish&8]"
 
+settings:
+  vanish:
+    bossbar: true
+    actionbar: false
+
 messages:
   vanish:
     list: "&f &9Level {0}:&8 - &7{1}"
@@ -21,3 +26,11 @@ messages:
       player-vanished: "&7Player {0} has vanished at level {1}"
       on: "&7You have toggled notifications &aON"
       off: "&7You have toggled notifications &cOFF"
+    location:
+      saved: "&7Saved your vanish entry location as &9{0}x {1}y {2}z&7."
+      teleported: "&7Your vanish entry location was saved, so you have been teleported."
+      on: "&7You have toggled location saving &aON"
+      off: "&7You have toggled location saving &cOFF"
+    nightvision:
+      on: "&7You have toggled nightvision &aON"
+      off: "&7You have toggled nightvision &cOFF"

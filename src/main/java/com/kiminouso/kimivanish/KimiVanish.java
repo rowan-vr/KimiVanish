@@ -8,6 +8,7 @@ import com.kiminouso.kimivanish.commands.subcommands.settings.NotifySettingComma
 import lombok.Getter;
 import org.bukkit.Bukkit;
 import org.bukkit.plugin.java.JavaPlugin;
+import org.bukkit.scheduler.BukkitTask;
 
 import java.util.logging.Level;
 
@@ -62,10 +63,17 @@ public final class KimiVanish extends JavaPlugin {
                     .forEach(sublist -> sublist.forEach(p -> Bukkit.getPlayer(player).showPlayer(this, p))
                     );
         }), 0L, 1L);
+
+        if (KimiVanish.getPlugin(KimiVanish.class).getConfig().getBoolean("settings.vanish.actionbar")) {
+            hideManager.start();
+        }
     }
 
     @Override
     public void onDisable() {
         hideManager.unhideAll();
+        if (hideManager.isActive()) {
+            hideManager.end();
+        }
     }
 }

@@ -5,6 +5,8 @@ import com.earth2me.essentials.User;
 import com.kiminouso.kimivanish.ConfigUtils;
 import com.kiminouso.kimivanish.KimiVanish;
 import com.kiminouso.kimivanish.listeners.VanishStatusUpdateEvent;
+import net.md_5.bungee.api.ChatMessageType;
+import net.md_5.bungee.api.chat.TextComponent;
 import org.bukkit.Bukkit;
 import org.bukkit.boss.BarColor;
 import org.bukkit.boss.BarStyle;
@@ -14,6 +16,7 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
+import org.bukkit.scheduler.BukkitTask;
 
 import java.util.UUID;
 
@@ -22,9 +25,9 @@ public class HideManager implements Listener {
 
     public void VanishPlayer(Player player) {
         Bukkit.getOnlinePlayers().forEach(p -> p.hidePlayer(KimiVanish.getPlugin(KimiVanish.class), player));
-        vanishedBossBar.addPlayer(player);
+        AddToBossBar(player, true);
 
-        KimiVanish.getPlugin(KimiVanish.class).getVanishManager().vanishLevels.tailMap(checkLevel(player),true).values().forEach(sublist -> sublist.forEach(p -> player.showPlayer(KimiVanish.getPlugin(KimiVanish.class), p)));
+        KimiVanish.getPlugin(KimiVanish.class).getVanishManager().vanishLevels.tailMap(checkLevel(player), true).values().forEach(sublist -> sublist.forEach(p -> player.showPlayer(KimiVanish.getPlugin(KimiVanish.class), p)));
         KimiVanish.getPlugin(KimiVanish.class).getVanishManager().currentlyVanished.add(player.getUniqueId());
 
         VanishStatusUpdateEvent event = new VanishStatusUpdateEvent(player, checkLevel(player), true);
@@ -37,17 +40,28 @@ public class HideManager implements Listener {
         }
 
         KimiVanish.getPlugin(KimiVanish.class).getStorage().findVanishUser(player.getUniqueId()).thenAccept(entry -> {
-           if (!entry.isEmpty())
-               return;
+            if (!entry.isEmpty())
+                return;
 
-           KimiVanish.getPlugin(KimiVanish.class).getStorage().registerVanishUser(player.getUniqueId(), false, false ,false);
+            KimiVanish.getPlugin(KimiVanish.class).getStorage().registerVanishUser(player.getUniqueId(), false, false, false, false, false);
         });
+    }
+
+    private void AddToBossBar(Player player, boolean shouldAdd) {
+        if (!KimiVanish.getPlugin(KimiVanish.class).getConfig().getBoolean("settings.vanish.bossbar"))
+            return;
+
+        if (shouldAdd) {
+            vanishedBossBar.addPlayer(player);
+        } else {
+            vanishedBossBar.removePlayer(player);
+        }
     }
 
     public void RemoveVanishStatus(Player player) {
         Bukkit.getOnlinePlayers().stream().filter(viewer -> viewer != player).forEach(viewer -> viewer.showPlayer(KimiVanish.getPlugin(KimiVanish.class), player));
         KimiVanish.getPlugin(KimiVanish.class).getVanishManager().removePlayer(player);
-        vanishedBossBar.removePlayer(player);
+        AddToBossBar(player, false);
 
         KimiVanish.getPlugin(KimiVanish.class).getVanishManager().currentlyVanished.remove(player.getUniqueId());
         VanishStatusUpdateEvent event = new VanishStatusUpdateEvent(player, checkLevel(player), false);
@@ -116,5 +130,33 @@ public class HideManager implements Listener {
             RemoveVanishStatus(player);
             player.sendMessage(ConfigUtils.getMessage("messages.vanish.unhide-all", false));
         }
+    }
+
+    private final Runnable actionBarTask = () -> KimiVanish.getPlugin(KimiVanish.class).getVanishManager().currentlyVanished.forEach(uuid -> {
+        Player player = Bukkit.getPlayer(uuid);
+        if (player == null)
+            return;
+
+        player.spigot().sendMessage(ChatMessageType.ACTION_BAR, new TextComponent(ConfigUtils.getMessage("messages.vanish.bossbar", false)));
+    });
+
+    private BukkitTask activeTask = null;
+
+    public void start() {
+        if (activeTask != null)
+            activeTask.cancel();
+
+        activeTask = Bukkit.getScheduler().runTaskTimer(KimiVanish.getPlugin(KimiVanish.class), actionBarTask, 0, 20L);
+    }
+
+    public void end() {
+        if (activeTask != null) {
+            activeTask.cancel();
+            activeTask = null;
+        }
+    }
+
+    public boolean isActive() {
+        return activeTask != null;
     }
 }
