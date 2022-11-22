@@ -4,16 +4,20 @@ import com.earth2me.essentials.Essentials;
 import com.earth2me.essentials.User;
 import com.kiminouso.kimivanish.ConfigUtils;
 import com.kiminouso.kimivanish.KimiVanish;
+import com.kiminouso.kimivanish.listeners.HidePlayerEvent;
+import com.kiminouso.kimivanish.listeners.UnhidePlayerEvent;
 import com.kiminouso.kimivanish.listeners.VanishStatusUpdateEvent;
 import net.md_5.bungee.api.ChatMessageType;
 import net.md_5.bungee.api.chat.TextComponent;
 import org.bukkit.Bukkit;
+import org.bukkit.GameMode;
 import org.bukkit.boss.BarColor;
 import org.bukkit.boss.BarStyle;
 import org.bukkit.boss.BossBar;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
+import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.scheduler.BukkitTask;
@@ -30,8 +34,11 @@ public class HideManager implements Listener {
         KimiVanish.getPlugin(KimiVanish.class).getVanishManager().vanishLevels.tailMap(checkLevel(player), true).values().forEach(sublist -> sublist.forEach(p -> player.showPlayer(KimiVanish.getPlugin(KimiVanish.class), p)));
         KimiVanish.getPlugin(KimiVanish.class).getVanishManager().currentlyVanished.add(player.getUniqueId());
 
-        VanishStatusUpdateEvent event = new VanishStatusUpdateEvent(player, checkLevel(player), true);
-        Bukkit.getPluginManager().callEvent(event);
+        VanishStatusUpdateEvent updateEvent = new VanishStatusUpdateEvent(player, checkLevel(player), true, player.getLocation());
+        Bukkit.getPluginManager().callEvent(updateEvent);
+
+        HidePlayerEvent hideEvent = new HidePlayerEvent(player, checkLevel(player), player.getLocation());
+        Bukkit.getPluginManager().callEvent(hideEvent);
 
         if (Bukkit.getServer().getPluginManager().getPlugin("Essentials") != null) {
             Essentials essentials = Essentials.getPlugin(Essentials.class);
@@ -64,8 +71,11 @@ public class HideManager implements Listener {
         AddToBossBar(player, false);
 
         KimiVanish.getPlugin(KimiVanish.class).getVanishManager().currentlyVanished.remove(player.getUniqueId());
-        VanishStatusUpdateEvent event = new VanishStatusUpdateEvent(player, checkLevel(player), false);
-        Bukkit.getPluginManager().callEvent(event);
+        VanishStatusUpdateEvent updateEvent = new VanishStatusUpdateEvent(player, checkLevel(player), false, player.getLocation());
+        Bukkit.getPluginManager().callEvent(updateEvent);
+
+        UnhidePlayerEvent unhideEvent = new UnhidePlayerEvent(player, player.getLocation());
+        Bukkit.getPluginManager().callEvent(unhideEvent);
 
         if (Bukkit.getServer().getPluginManager().getPlugin("Essentials") != null) {
             Essentials essentials = Essentials.getPlugin(Essentials.class);
@@ -118,6 +128,19 @@ public class HideManager implements Listener {
                 }
             });
         });
+    }
+
+    @EventHandler
+    private void onSpectatorInventoryClick(InventoryClickEvent event) {
+        if (!(event.getWhoClicked() instanceof Player player))
+            return;
+
+        if (!KimiVanish.getPlugin(KimiVanish.class).getVanishManager().isVanished(player))
+            return;
+
+        if (player.getGameMode() == GameMode.SPECTATOR) {
+            event.setCancelled(false);
+        }
     }
 
     public void unhideAll() {
