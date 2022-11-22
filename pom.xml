@@ -63,6 +63,14 @@
             </resource>
         </resources>
     </build>
+         
+    <distributionManagement>
+        <repository>
+            <id>github</id>
+            <name>GitHub TheKimiNoUso Apache Maven Packages</name>
+            <url>https://maven.pkg.github.com/TheKimiNoUso/KimiVanish</url>
+        </repository>
+    </distributionManagement>
 
     <repositories>
         <repository>
