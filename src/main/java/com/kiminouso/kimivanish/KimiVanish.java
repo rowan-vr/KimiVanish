@@ -7,7 +7,6 @@ import lombok.Getter;
 import me.tippie.tippieutils.guis.GuiManager;
 import org.bukkit.Bukkit;
 import org.bukkit.plugin.java.JavaPlugin;
-import org.bukkit.scheduler.BukkitTask;
 
 import java.util.logging.Level;
 

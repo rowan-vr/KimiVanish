@@ -18,14 +18,19 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.inventory.InventoryClickEvent;
+import org.bukkit.event.player.PlayerInteractEntityEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
+import org.bukkit.event.player.PlayerToggleSneakEvent;
 import org.bukkit.scheduler.BukkitTask;
 
+import java.util.HashSet;
+import java.util.Set;
 import java.util.UUID;
 
 public class HideManager implements Listener {
     private final BossBar vanishedBossBar = Bukkit.createBossBar(ConfigUtils.getMessage("messages.vanish.bossbar", false), BarColor.WHITE, BarStyle.SOLID);
+    private final Set<UUID> recentlySneaked = new HashSet<>();
 
     public void VanishPlayer(Player player) {
         Bukkit.getOnlinePlayers().forEach(p -> p.hidePlayer(KimiVanish.getPlugin(KimiVanish.class), player));
@@ -153,6 +158,42 @@ public class HideManager implements Listener {
             RemoveVanishStatus(player);
             player.sendMessage(ConfigUtils.getMessage("messages.vanish.unhide-all", false));
         }
+    }
+
+    @EventHandler
+    private void onPlayerSneak(PlayerToggleSneakEvent event) {
+        Player player = event.getPlayer();
+        if (!player.hasPermission("kimivanish.staffmode"))
+            return;
+
+        if (!KimiVanish.getPlugin(KimiVanish.class).getVanishManager().isVanished(player))
+            return;
+
+        if (!event.isSneaking())
+            return;
+
+        if (recentlySneaked.contains(player.getUniqueId())) {
+            recentlySneaked.remove(player.getUniqueId());
+            player.setGameMode(GameMode.SPECTATOR);
+        } else {
+            recentlySneaked.add(player.getUniqueId());
+            Bukkit.getScheduler().runTaskLater(KimiVanish.getPlugin(KimiVanish.class), () -> recentlySneaked.remove(player.getUniqueId()), 10L);
+        }
+    }
+
+    @EventHandler
+    private void onPlayerRightClick(PlayerInteractEntityEvent event) {
+        Player player = event.getPlayer();
+        if (!KimiVanish.getPlugin(KimiVanish.class).getVanishManager().isVanished(player))
+            return;
+
+        if (!player.hasPermission("kimivanish.staffmode") && player.getGameMode() != GameMode.SPECTATOR)
+            return;
+
+        if (!(event.getRightClicked() instanceof Player clicked))
+            return;
+
+        player.openInventory(clicked.getInventory());
     }
 
     private final Runnable actionBarTask = () -> KimiVanish.getPlugin(KimiVanish.class).getVanishManager().currentlyVanished.forEach(uuid -> {
