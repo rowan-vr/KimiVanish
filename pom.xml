@@ -5,8 +5,8 @@
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>com.kiminouso</groupId>
-    <artifactId>KimiVanish</artifactId>
-    <version>1.0.1</version>
+    <artifactId>kimivanish</artifactId>
+    <version>1.0.3</version>
     <packaging>jar</packaging>
 
     <name>KimiVanish</name>
